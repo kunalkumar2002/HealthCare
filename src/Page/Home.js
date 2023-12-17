@@ -1,13 +1,13 @@
 import myimg from "../assets/kissclipart-health-care-clip.jpg";
 const Home = () => {
   return (
-    <div style={{ position: "relative", height: "85vh" }}>
+    <div style={{ position: "relative", height: "100vh" }}>
       <div
         style={{
           display: "flex",
           // flexWrap: "wrap",
           alignItems: "center",
-          height: "50vh",
+          height: "60vh",
           width: "100vh",
           overflow: "hidden",
           margin: "0 auto",
@@ -29,7 +29,7 @@ const Home = () => {
       </div>
       <div
         style={{
-          position: "absolute",
+          position: "fixed",
           bottom: "0",
           width: "100%",
           marginBottom: "20px",

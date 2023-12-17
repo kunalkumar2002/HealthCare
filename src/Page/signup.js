@@ -2,7 +2,8 @@ import { useState } from "react";
 import styles from "../style/signup.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 const Signup = () => {
   const initialFormValues = {
@@ -24,8 +25,12 @@ const Signup = () => {
         await updateProfile(user, {
           displayName: input.name,
         });
-        //console.log(user);
-        navigate("/");
+        setDoc(doc(db, "uesr-info", input.email), {
+          userInfo: input.email,
+          userCart: [],
+        });
+        console.log(user);
+        navigate("/details");
       })
       .catch((err) => {
         console.log("geting error", err);

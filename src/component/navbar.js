@@ -17,7 +17,7 @@ const Navbar = (props) => {
               alignItems: "center",
             }}
           >
-            <NavLink
+            {/* <NavLink
               style={{
                 textDecoration: "none",
                 marginRight: "10px",
@@ -26,7 +26,7 @@ const Navbar = (props) => {
               to="/details"
             >
               Details
-            </NavLink>
+            </NavLink> */}
             <NavLink
               to="/login"
               style={{ textDecoration: "none", marginRight: "10px" }}
