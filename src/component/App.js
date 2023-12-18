@@ -5,6 +5,7 @@ import Navbar from "./navbar";
 import Login from "../Page/login";
 import SignUp from "../Page/signup";
 import Details from "../Page/details";
+import Medicine from "./medicine";
 
 function App() {
   const router = createBrowserRouter([
@@ -16,6 +17,7 @@ function App() {
         { path: "/login", element: <Login /> },
         { path: "/signup", element: <SignUp /> },
         { path: "/details", element: <Details /> },
+        { path: "/medicine", element: <Medicine /> },
       ],
     },
   ]);

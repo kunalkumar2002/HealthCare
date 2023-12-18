@@ -27,10 +27,11 @@ const Signup = () => {
         });
         setDoc(doc(db, "uesr-info", input.email), {
           userInfo: input.email,
+          userName: input.name,
           userCart: [],
         });
         console.log(user);
-        navigate("/details");
+        navigate("/details", { input: input });
       })
       .catch((err) => {
         console.log("geting error", err);
