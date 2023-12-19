@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { collection, doc, setDoc, onSnapshot } from "firebase/firestore";
+import { db, auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Medicine = () => {
   const [property, setProperty] = useState({
@@ -11,19 +12,75 @@ const Medicine = () => {
     expiry: "",
   });
   const navigate = useNavigate();
-  const location = useLocation();
-  const input = location.state && location.state.input;
-  console.log(input);
+  const [curruser, setCurruser] = useState("");
+  const [cart, setCart] = useState([]);
 
-  const handlesubmit = (e) => {
-    e.preventDefault();
-    // console.log(property);
-    const updatedCart = [...input.userCart, property];
-    setDoc(doc(db, "uesr-info", input.email), {
-      ...input,
-      userCart: updatedCart,
+  // Get the currently signed-in user
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log(user.uid);
+        setCurruser(user.email);
+      } else {
+        console.log("not found");
+      }
     });
-    navigate("/details");
+
+    // Cleanup function to unsubscribe when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (curruser) {
+      fetchData();
+    }
+  }, [curruser]);
+
+  const fetchData = () => {
+    const postDocRef = doc(db, "user-info", curruser);
+
+    onSnapshot(postDocRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const postData = {
+          id: docSnapshot.id,
+          ...docSnapshot.data(),
+        };
+
+        const userCart = postData;
+        setCart(userCart);
+        console.log(userCart);
+      } else {
+        console.log("Document does not exist or there was an error.");
+      }
+    });
+  };
+  const handlesubmit = async (e) => {
+    e.preventDefault();
+
+    const postDocRef = doc(db, "user-info", curruser);
+
+    // Get postData from current state
+    const postData = cart;
+    console.log(postData.userCart);
+    // Add new medicine details to userCart array
+    postData.userCart.push({
+      name: property.name,
+      time1: property.time1,
+      time2: property.time2,
+      expiry: property.expiry,
+    });
+
+    // Write updated data to Firestore
+    setDoc(postDocRef, postData)
+      .then(() => {
+        console.log("Medicine data updated successfully!");
+        // Update local state with the updated postData
+        setCart(postData.userCart);
+        navigate("/details");
+      })
+      .catch((error) => {
+        console.error("Error updating data:", error);
+      });
   };
 
   return (

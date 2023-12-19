@@ -1,16 +1,62 @@
-import { useLocation, useNavigate } from "react-router-dom";
-const Details = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-  // Access the input data from the location state
-  const input = location.state && location.state.input;
-  // const property = location.state && location.state.property;
+import { collection, doc, setDoc, onSnapshot } from "firebase/firestore";
+import { db, auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
+const Details = () => {
+  const [curruser, setCurruser] = useState("");
+  const navigate = useNavigate();
+  // const location = useLocation();
+
+  //const email = location.state.email;
+  //console.log(email);
+  //console.log(location.state.email);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        console.log(user.uid);
+        setCurruser(user.email);
+      } else {
+        console.log("not found");
+      }
+    });
+
+    // Cleanup function to unsubscribe when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (curruser) {
+      fetchData();
+    }
+  }, [curruser]);
+
+  const fetchData = () => {
+    const postDocRef = doc(db, "user-info", curruser);
+
+    onSnapshot(postDocRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const postData = {
+          id: docSnapshot.id,
+          ...docSnapshot.data(),
+        };
+
+        const userCart = postData;
+        // setCart(userCart);
+        console.log(userCart);
+      } else {
+        console.log("Document does not exist or there was an error.");
+      }
+    });
+  };
 
   const handleclick = (e) => {
     e.preventDefault();
     // console.log(e);
-    navigate("/medicine", { input: input });
+    // navigate("/medicine", { state: { email: email } });
+    navigate("/medicine");
   };
 
   return (
@@ -52,7 +98,12 @@ const Details = () => {
             }}
           >
             <h4 style={{ background: "white" }}>Medicine taken</h4>
-            <div></div>
+            <div>
+              <ul style={{ listStyle: "none", textAlign: "left" }}>
+                <li>Limcee</li>
+                <li>Neurobion Forte </li>
+              </ul>
+            </div>
           </div>
           <div
             style={{

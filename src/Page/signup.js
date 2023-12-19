@@ -25,13 +25,15 @@ const Signup = () => {
         await updateProfile(user, {
           displayName: input.name,
         });
-        setDoc(doc(db, "uesr-info", input.email), {
+        setDoc(doc(db, "user-info", input.email), {
           userInfo: input.email,
           userName: input.name,
           userCart: [],
         });
-        console.log(user);
-        navigate("/details", { input: input });
+        // console.log(user);
+        // console.log(input.email);
+        // navigate("/details", { state: { email: input.email } });
+        navigate("/details");
       })
       .catch((err) => {
         console.log("geting error", err);
