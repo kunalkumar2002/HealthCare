@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {  doc, setDoc, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -31,29 +31,29 @@ const Medicine = () => {
   }, []);
 
   useEffect(() => {
+    const fetchData = () => {
+      const postDocRef = doc(db, "user-info", curruser);
+
+      onSnapshot(postDocRef, (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const postData = {
+            id: docSnapshot.id,
+            ...docSnapshot.data(),
+          };
+
+          const userCart = postData;
+          // setCart(userCart);
+          console.log(userCart);
+        } else {
+          console.log("Document does not exist or there was an error.");
+        }
+      });
+    };
+
     if (curruser) {
       fetchData();
     }
   }, [curruser]);
-
-  const fetchData = () => {
-    const postDocRef = doc(db, "user-info", curruser);
-
-    onSnapshot(postDocRef, (docSnapshot) => {
-      if (docSnapshot.exists()) {
-        const postData = {
-          id: docSnapshot.id,
-          ...docSnapshot.data(),
-        };
-
-        const userCart = postData;
-        setCart(userCart);
-        console.log(userCart);
-      } else {
-        console.log("Document does not exist or there was an error.");
-      }
-    });
-  };
   const handlesubmit = async (e) => {
     e.preventDefault();
 
