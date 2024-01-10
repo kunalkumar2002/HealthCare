@@ -17,8 +17,8 @@ const Login = () => {
     //console.log(logvalue);
     signInWithEmailAndPassword(auth, logvalue.email, logvalue.pass)
       .then((res) => {
-        //const user = res.user;
-        //console.log("logd in successfully", user);
+        const user = res.user;
+        console.log("logd in successfully", user);
         navigate("/details");
       })
       .catch((err) => {
